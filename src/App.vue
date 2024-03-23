@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import Menu from '@/components/Menu.vue'
 import Footer from '@/components/Footer.vue'
 import BoxCount from '@/components/Box-count.vue'
@@ -9,8 +9,30 @@ import DividerWave from '@/components/divider-wave.vue'
 import ButtonTime from '@/components/Button-time.vue'
 
 const seconds = ref(60)
+const disableText = ref(false)
+const disableButtons = ref(false)
+let intervalId: number | undefined = undefined
+
 const timeSelectedEvent = (minute: number) => {
   seconds.value = minute * 60
+}
+
+watch(seconds, (newValue, _oldValue) => {
+  if (newValue <= 0 && intervalId !== undefined) {
+    disableText.value = true
+    clearInterval(intervalId)
+    intervalId = undefined
+  }
+})
+
+const handleStartTime = () => {
+  disableButtons.value = true;
+  if (intervalId === undefined) {
+    intervalId = setInterval(() => {
+      console.log('ee')
+      seconds.value--
+    }, 1000)
+  }
 }
 </script>
 
@@ -37,12 +59,19 @@ const timeSelectedEvent = (minute: number) => {
     </div>
     <DividerWave />
     <div class="flex justify-center space-x-14 pb-10">
-      <ButtonTime @minute-selected="timeSelectedEvent" :minute="1" />
-      <ButtonTime @minute-selected="timeSelectedEvent" :minute="3" />
-      <ButtonTime @minute-selected="timeSelectedEvent" :minute="5" />
+      <ButtonTime @minute-selected="timeSelectedEvent" :minute="1" :disable="disableButtons"/>
+      <ButtonTime @minute-selected="timeSelectedEvent" :minute="3" :disable="disableButtons"/>
+      <ButtonTime @minute-selected="timeSelectedEvent" :minute="5" :disable="disableButtons"/>
     </div>
-    <div class="flex items-center justify-center w-full">
-      <InputText />
+    <div class="flex items-center justify-center">
+      <InputText @start-time="handleStartTime" :disable-text="disableText" />
+    </div>
+    <div
+      class="flex justify-center p-12 border-4 bg-slate-50 m-16 text-xl rounded-3xl"
+    >
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nesciunt iure optio corrupti?
+      Distinctio voluptatem quos hic sapiente iure deleniti quae placeat sit corrupti suscipit atque
+      totam velit sequi, inventore assumenda?
     </div>
   </main>
   <Footer />

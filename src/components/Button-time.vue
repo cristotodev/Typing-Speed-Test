@@ -4,6 +4,10 @@ const props = defineProps({
   minute: {
     type: Number,
     required: true
+  },
+  disable: {
+    type: Boolean,
+    required: true
   }
 })
 
@@ -18,7 +22,7 @@ const emitEvent = () => {
 </script>
 
 <template>
-  <div @click="emitEvent" class="cursor-pointer bg-[#ffd700] hover:bg-[#b29600] p-3 rounded-2xl">
+  <div @click="disable ? null : emitEvent" :class="disable ? 'bg-gray-200 cursor-not-allowed' : 'bg-[#ffd700] cursor-pointer hover:bg-[#b29600]'" class="p-3 rounded-2xl">
     {{ minute }} {{ text }}
   </div>
 </template>
